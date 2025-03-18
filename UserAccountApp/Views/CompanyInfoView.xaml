@@ -1,0 +1,65 @@
+<UserControl x:Class="UserAccountApp.Views.CompanyInfoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:UserAccountApp.Views"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:b1="clr-namespace:Microsoft.VisualBasic;assembly=Microsoft.VisualBasic"
+             mc:Ignorable="d">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Інформація про компанію" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,20">
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseRightButtonDown">
+                    <b:InvokeCommandAction Command="{Binding HandleRightClickCommand}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+        </TextBlock>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Назва:" Grid.Row="0" Grid.Column="0" Margin="0,0,10,10"/>
+            <TextBox Text="{Binding Company.Name, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.Row="0" Grid.Column="1" Margin="0,0,0,10"
+                     IsReadOnly="{Binding IsReadOnly}"/>
+
+            <TextBlock Text="Адреса:" Grid.Row="1" Grid.Column="0" Margin="0,0,10,10"/>
+            <TextBox Text="{Binding Company.Addres, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.Row="1" Grid.Column="1" Margin="0,0,0,10"
+                     IsReadOnly="{Binding IsReadOnly}"/>
+
+            <TextBlock Text="Телефон:" Grid.Row="2" Grid.Column="0" Margin="0,0,10,10"/>
+            <TextBox Text="{Binding Company.PhoneNumber, UpdateSourceTrigger=PropertyChanged}"
+                     Grid.Row="2" Grid.Column="1" Margin="0,0,0,10"
+                     IsReadOnly="{Binding IsReadOnly}"/>
+        </Grid>
+
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,20,0,0"
+                    Visibility="{Binding ShowButtons, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button Content="Зберегти зміни" 
+                    Command="{Binding SaveChangesCommand}"
+                    Width="120"/>
+        </StackPanel>
+    </Grid>
+</UserControl> 

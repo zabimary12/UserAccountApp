@@ -1,0 +1,45 @@
+<Window x:Class="UserAccountApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UserAccountApp.Views"
+        xmlns:vm="clr-namespace:UserAccountApp.ViewModels"
+        mc:Ignorable="d"
+        Title="Облік працівників компанії" Height="600" Width="1000">
+    
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:CompanyInfoViewModel}">
+            <local:CompanyInfoView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EmployeesViewModel}">
+            <local:EmployeesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SalaryReportViewModel}">
+            <local:SalaryReportView/>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Головна">
+                <MenuItem Header="Інформація про компанію" Command="{Binding ShowCompanyInfoCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Персонал">
+                <MenuItem Header="Перегляд персоналу" Command="{Binding ShowEmployeesCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Звітність">
+                <MenuItem Header="Зарплатна звітність" Command="{Binding ShowSalaryReportCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <Frame Grid.Row="1" 
+               Content="{Binding CurrentView}"
+               NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window> 

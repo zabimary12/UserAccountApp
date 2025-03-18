@@ -1,0 +1,148 @@
+<UserControl x:Class="UserAccountApp.Views.SalaryReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:UserAccountApp.Views"
+             xmlns:vm="clr-namespace:UserAccountApp.ViewModels"
+             mc:Ignorable="d"
+             Loaded="UserControl_Loaded">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Зарплатна звітність" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,20"/>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Відділ:" 
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding Departments}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedDepartment}"
+                      Margin="0,0,20,0"/>
+
+            <Button Grid.Column="6"
+                    Content="Сформувати звіт"
+                    Command="{Binding LoadReportCommand}"
+                    Width="120"
+                    HorizontalAlignment="Left"/>
+        </Grid>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding FilteredReportData}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column"
+                  BorderThickness="1"
+                  Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Відділ" 
+                                  Binding="{Binding DepartmentName}" 
+                                  Width="200">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <Button Content="Відділ" 
+                                    Command="{Binding DataContext.SortCommand, 
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="DepartmentName"/>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Кількість працівників" 
+                                  Binding="{Binding EmployeeCount}" 
+                                  Width="150">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <Button Content="Кількість працівників" 
+                                    Command="{Binding DataContext.SortCommand, 
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="EmployeeCount"/>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Загальна сума" 
+                                  Binding="{Binding TotalSalary, StringFormat=N2}" 
+                                  Width="150">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <Button Content="Загальна сума" 
+                                    Command="{Binding DataContext.SortCommand, 
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="TotalSalary"/>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Середня зарплата" 
+                                  Binding="{Binding AverageSalary, StringFormat=N2}" 
+                                  Width="150">
+                    <DataGridTextColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <Button Content="Середня зарплата" 
+                                    Command="{Binding DataContext.SortCommand, 
+                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="AverageSalary"/>
+                        </DataTemplate>
+                    </DataGridTextColumn.HeaderTemplate>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" 
+                        Orientation="Horizontal">
+                <TextBlock Text="Всього працівників: " 
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalEmployees}" 
+                           Margin="5,0,20,0"
+                           VerticalAlignment="Center"/>
+                
+                <TextBlock Text="Загальна сума: " 
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalAmount, StringFormat=N2}" 
+                           Margin="5,0,0,0"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" 
+                        Orientation="Horizontal">
+                <Button Content="Експорт в TXT" 
+                        Command="{Binding ExportToTxtCommand}"
+                        Width="120"
+                        Margin="0,0,10,0"/>
+                <Button Content="Експорт в CSV" 
+                        Command="{Binding ExportToCsvCommand}"
+                        Width="120"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl> 
