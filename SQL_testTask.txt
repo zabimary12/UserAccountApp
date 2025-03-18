@@ -1,0 +1,81 @@
+2.Завдання, припустимо що таблиця має назву Users та поля Id, Name, Age, City
+Так скрипт для виведення всіх повторювальних рядків буде виглядати так:
+SELECT Name, Age, City, COUNT(*) AS Duplicate_Users
+FROM Users
+GROUP BY Name, Age, City
+HAVING COUNT(*) > 1;
+
+Для видалення ж дублікатів ми можемо використовувати 2 скрипта:
+2.1 - DELETE FROM Users
+WHERE Id NOT IN (
+    SELECT MAX(Id) FROM Users
+    GROUP BY Name, Age, City
+);
+
+2.2 - WITH du AS (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY Name, Age, City ORDER BY Id DESC) AS rn
+    FROM Users
+)
+DELETE FROM Users WHERE Id IN (
+    SELECT Id FROM du WHERE rn > 1
+);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+3.
+отримати всіх співробітників, незалежно від того, чи мають вони відповідності відділу
+департаменті:
+SELECT e.LAST_NAME, e.DEPARTMENT_ID, d.DEPARTMENT_NAME, e.SALARY
+FROM EMPLOYEES e
+LEFT JOIN DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID;
+
+вивести середню зарплату по відділах
+SELECT d.DEPARTMENT_NAME, AVG(e.SALARY) AS AVG_SALARY
+FROM EMPLOYEES e
+RIGHT JOIN DEPARTMENTS d ON e.DEPARTMENT_ID = d.DEPARTMENT_ID
+GROUP BY d.DEPARTMENT_NAME;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+4. Є декілька варіантів вирішення цієї задачі:
+SELECT DEPT_ID, 
+       MIN(SALARY) AS MIN_SALARY, 
+       MAX(SALARY) AS MAX_SALARY
+FROM EMPLOYEES
+GROUP BY DEPT_ID
+HAVING MIN(SALARY) < 5000 AND MAX(SALARY) > 15000;
+________________________________________________________________________________
+SELECT DISTINCT e.DEPT_ID, 
+       min_salary.MIN_SALARY, 
+       max_salary.MAX_SALARY
+FROM EMPLOYEES e
+JOIN (
+    SELECT DEPT_ID, MIN(SALARY) AS MIN_SALARY
+    FROM EMPLOYEES
+    GROUP BY DEPT_ID
+    HAVING MIN(SALARY) < 5000
+) min_salary ON e.DEPT_ID = min_salary.DEPT_ID
+JOIN (
+    SELECT DEPT_ID, MAX(SALARY) AS MAX_SALARY
+    FROM EMPLOYEES
+    GROUP BY DEPT_ID
+    HAVING MAX(SALARY) > 15000
+) max_salary ON e.DEPT_ID = max_salary.DEPT_ID;
+
+__________________________________________________________________________________
+SELECT DISTINCT DEPT_ID, 
+       (SELECT MIN(SALARY) FROM EMPLOYEES e2 WHERE e2.DEPT_ID = e1.DEPT_ID) AS MIN_SALARY,
+       (SELECT MAX(SALARY) FROM EMPLOYEES e3 WHERE e3.DEPT_ID = e1.DEPT_ID) AS MAX_SALARY
+FROM EMPLOYEES e1
+WHERE EXISTS (
+    SELECT 1 FROM EMPLOYEES e2 WHERE e2.DEPT_ID = e1.DEPT_ID AND e2.SALARY < 5000
+)
+AND EXISTS (
+    SELECT 1 FROM EMPLOYEES e3 WHERE e3.DEPT_ID = e1.DEPT_ID AND e3.SALARY > 15000
+);
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+5.1 - виконання DELETE FROM departments WHERE department id = 40; 
+Запит не виконаэться, При видаленні видасть помилку що неможливо видалити оскільки "Dept_id є зовнішнім ключем до DEPARTMENT_ID колонки таблиці DEPARTMENTS" і є записи в таблиці де використовуються данні про department що бажають видалити.
+
+5.2 - виконання DELETE employee_id, salary, job_id FROM employees WHERE dept_id = 90;
+Запит не виконається, і база даних поверне помилку про неправильний синтаксис бо після Delete повинно йти FROM 
+
